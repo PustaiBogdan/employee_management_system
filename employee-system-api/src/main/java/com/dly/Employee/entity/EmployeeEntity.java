@@ -18,9 +18,22 @@ public class EmployeeEntity {
 
     @Column(name = "manager_id",nullable = true)
     @ColumnDefault("0")
-    private  Long managerId;
+    private  Long managerId = 0L;
 
     @Column(name = "department_id",nullable = true)
     @ColumnDefault("0")
-    private  Long departmentId;
+    private  Long departmentId = 0L;
+
+
+
+    @PrePersist
+    @PreUpdate
+    private void prePersistPreUpdate() {
+        if (managerId == null) {
+            managerId = 0L;
+        }
+        if (departmentId == null) {
+            departmentId = 0L;
+        }
+    }
 }
