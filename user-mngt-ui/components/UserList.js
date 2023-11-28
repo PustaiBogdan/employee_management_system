@@ -1,50 +1,50 @@
 import { React, useState, useEffect } from "react";
 import EditUser from "./EditUser";
 import User from "./User";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchEmployees } from "../public/src/features/employeesSlice";
+import { fetchDepartments } from "../public/src/features/departmentSlice";
 
-const UserList = ({ user }) => {
+const UserList = () => {
+  console.log("22222");
   const USER_API_BASE_URL = "http://localhost:8080/api/v1/users";
-  const [users, setUsers] = useState(null);
+  const dispatch = useDispatch();
+  // const [users, setUsers] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null);
   const [responseUser, setResponseUser] = useState(null);
+  const departments = useSelector((state) => state.departments.departments);
+  const employees = useSelector((state) => state.employees.employees);
+  const status = useSelector((state) => state.employees.status);
+
+  console.log(" dd ", employees);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch(USER_API_BASE_URL, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const users = await response.json();
-        setUsers(users);
+        dispatch(fetchDepartments());
+        dispatch(fetchEmployees());
       } catch (error) {
         console.log(error);
       }
       setLoading(false);
     };
     fetchData();
-  }, [user, responseUser]);
+  }, [dispatch, responseUser]);
 
   const deleteUser = (e, id) => {
     e.preventDefault();
     fetch(USER_API_BASE_URL + "/" + id, {
       method: "DELETE",
-    }).then((res) => {
-      if (users) {
-        setUsers((prevElement) => {
-          return prevElement.filter((user) => user.id !== id);
-        });
-      }
     });
   };
 
   const editUser = (e, id) => {
+    console.log("333");
     e.preventDefault();
     setUserId(id);
+    dispatch(fetchEmployees());
   };
 
   return (
@@ -61,7 +61,13 @@ const UserList = ({ user }) => {
                   Last Name
                 </th>
                 <th className="text-left font-medium text-gray-500 uppercase tracking-wide py-3 px-6">
-                  EmailId
+                  Email
+                </th>
+                <th className="text-left font-medium text-gray-500 uppercase tracking-wide py-3 px-6">
+                  Manager
+                </th>
+                <th className="text-left font-medium text-gray-500 uppercase tracking-wide py-3 px-6">
+                  Department
                 </th>
                 <th className="text-right font-medium text-gray-500 uppercase tracking-wide py-3 px-6">
                   Actions
@@ -70,14 +76,35 @@ const UserList = ({ user }) => {
             </thead>
             {!loading && (
               <tbody className="bg-white">
-                {users?.map((user) => (
-                  <User
-                    user={user}
-                    key={user.id}
-                    deleteUser={deleteUser}
-                    editUser={editUser}
-                  />
-                ))}
+                {employees?.map((user) => {
+                  const departmentName =
+                    departments.find(
+                      (department) => department.id === user.departmentId
+                    )?.description || "N/A";
+                  const manager = employees.find(
+                    (employee) => employee.id === user.managerId
+                  );
+
+                  // Construiți numele managerului sau returnați "N/A" dacă managerul nu există
+                  const managerName = manager
+                    ? `${manager.firstName} ${manager.lastName}`
+                    : "N/A";
+
+                  // const managerName =
+                  //   employees.find((employee) => employee.id === user.managerId)
+                  //     ?.firstName || "N/A";
+
+                  return (
+                    <User
+                      user={user}
+                      key={user.id}
+                      deleteUser={deleteUser}
+                      editUser={editUser}
+                      departmentName={departmentName}
+                      managerName={managerName}
+                    />
+                  );
+                })}
               </tbody>
             )}
           </table>

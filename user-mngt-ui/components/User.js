@@ -1,30 +1,25 @@
 import React from "react";
+import { Button } from "./Button";
+import TableCell from "./TableCell";
 
-const User = ({ user, deleteUser, editUser }) => {
+const User = ({ user, deleteUser, editUser, departmentName, managerName }) => {
+  const labels = [
+    `${user.firstName} ${user.lastName}`,
+    user.lastName,
+    user.emailId,
+    managerName,
+    departmentName,
+  ];
+  console.log(user);
+
   return (
     <tr key={user.id}>
-      <td className="text-left px-6 py-4 whitespace-nowrap">
-        <div className="text-sm text-gray-500">{user.firstName}</div>
-      </td>
-      <td className="text-left px-6 py-4 whitespace-nowrap">
-        <div className="text-sm text-gray-500">{user.lastName}</div>
-      </td>
-      <td className="text-left px-6 py-4 whitespace-nowrap">
-        <div className="text-sm text-gray-500">{user.emailId}</div>
-      </td>
+      {labels.map((label, index) => (
+        <TableCell key={index} label={label} />
+      ))}
       <td className="text-right px-6 py-4 whitespace-nowrap">
-        <a
-          onClick={(e, id) => editUser(e, user.id)}
-          className="text-indigo-600 hover:text-indigo-800 hover:cursor-pointer px-4"
-        >
-          Edit
-        </a>
-        <a
-          onClick={(e, id) => deleteUser(e, user.id)}
-          className="text-indigo-600 hover:text-indigo-800 hover:cursor-pointer"
-        >
-          Delete
-        </a>
+        <Button onClick={(e, id) => editUser(e, user.id)} label={"Edit"} />
+        <Button onClick={(e, id) => deleteUser(e, user.id)} label={"Delete"} />
       </td>
     </tr>
   );

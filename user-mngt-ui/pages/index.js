@@ -17,6 +17,8 @@ export default function Home({ session }) {
 
       <main>
         <AddUser />
+        <UserList />
+
         <Dashboard />
       </main>
     </div>

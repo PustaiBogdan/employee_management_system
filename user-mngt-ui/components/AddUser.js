@@ -1,63 +1,94 @@
 import { Dialog, Transition } from "@headlessui/react";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Fragment, useState } from "react";
 import UserList from "./UserList";
+import { fetchDepartments } from "../public/src/features/departmentSlice";
+import { fetchEmployees } from "../public/src/features/employeesSlice";
+
+import { useDispatch, useSelector } from "react-redux";
 
 const AddUser = () => {
   const USER_API_BASE_URL = "http://localhost:8080/api/v1/users";
+  const dispatch = useDispatch();
 
+  const departments = useSelector((state) => state.departments.departments);
+  const employees = useSelector((state) => state.employees.employees);
+
+  const firstNameRef = useRef(null);
+  const lastNameRef = useRef(null);
+  const emailIdRef = useRef(null);
+  const departmentIdRef = useRef(null);
+  const managerIdRef = useRef(null);
+
+  // const status = useSelector((state) => state.departments.status);
+  // const error = useSelector((state) => state.departments.error);
+
+  // useEffect(() => {
+  //   if (status === "idle") {
+
+  //   }
+  // }, [status, dispatch]);
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState({
-    id: "",
-    firstName: "",
-    lastName: "",
-    emailId: "",
-  });
-  const [responseUser, setResponseUser] = useState({
-    id: "",
-    firstName: "",
-    lastName: "",
-    emailId: "",
-  });
+  // const [user, setUser] = useState({
+  //   id: "",
+  //   firstName: "",
+  //   lastName: "",
+  //   emailId: "",
+  //   parentId: "",
+  //   managerId: "",
+  // });
+  // const [responseUser, setResponseUser] = useState({
+  //   id: "",
+  //   firstName: "",
+  //   lastName: "",
+  //   emailId: "",
+  // });
 
   function closeModal() {
     setIsOpen(false);
   }
 
   function openModal() {
+    dispatch(fetchDepartments());
+    dispatch(fetchEmployees());
     setIsOpen(true);
   }
 
-  const handleChange = (event) => {
-    const value = event.target.value;
-    setUser({ ...user, [event.target.name]: value });
-  };
+  // const handleChange = (event) => {
+  //   const value = event.target.value;
+  //   setUser({ ...user, [event.target.name]: value });
+  // };
 
   const saveUser = async (e) => {
     e.preventDefault();
+
+    const newUser = {
+      firstName: firstNameRef.current.value,
+      lastName: lastNameRef.current.value,
+      emailId: emailIdRef.current.value,
+      departmentId: departmentIdRef.current.value,
+      managerId: managerIdRef.current.value,
+    };
+
     const response = await fetch(USER_API_BASE_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(user),
+
+      body: JSON.stringify(newUser),
     });
     if (!response.ok) {
       throw new Error("Something went wrong");
     }
-    const _user = await response.json();
-    setResponseUser(_user);
+    dispatch(fetchEmployees());
+
+    // setResponseUser(_user);
     reset(e);
   };
 
   const reset = (e) => {
     e.preventDefault();
-    setUser({
-      id: "",
-      firstName: "",
-      lastName: "",
-      emailId: "",
-    });
     setIsOpen(false);
   };
 
@@ -103,10 +134,9 @@ const AddUser = () => {
                         First Name
                       </label>
                       <input
+                        ref={firstNameRef}
                         type="text"
                         name="firstName"
-                        value={user.firstName}
-                        onChange={(e) => handleChange(e)}
                         className="h-10 w-96 border mt-2 px-2 py-2"
                       ></input>
                     </div>
@@ -115,10 +145,9 @@ const AddUser = () => {
                         Last Name
                       </label>
                       <input
+                        ref={lastNameRef}
                         type="text"
                         name="lastName"
-                        value={user.lastName}
-                        onChange={(e) => handleChange(e)}
                         className="h-10 w-96 border mt-2 px-2 py-2"
                       ></input>
                     </div>
@@ -127,12 +156,50 @@ const AddUser = () => {
                         Email Id
                       </label>
                       <input
+                        ref={emailIdRef}
                         type="text"
                         name="emailId"
-                        value={user.emailId}
-                        onChange={(e) => handleChange(e)}
                         className="h-10 w-96 border mt-2 px-2 py-2"
                       ></input>
+                    </div>
+                    <div className="h-14 my-4">
+                      <label className="block text-gray-600 text-sm font-normal">
+                        Department
+                      </label>
+                      <select
+                        ref={departmentIdRef}
+                        name="departmentId"
+                        className="h-10 w-96 border mt-2 px-2 py-2"
+                      >
+                        <option key={0} value="">
+                          Alegeți
+                        </option>
+                        {departments.map((department) => (
+                          <option key={department.id} value={department.id}>
+                            {department.description}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="h-14 my-4">
+                      <label className="block text-gray-600 text-sm font-normal">
+                        Manager
+                      </label>
+                      <select
+                        ref={managerIdRef}
+                        name="departmentId"
+                        className="h-10 w-96 border mt-2 px-2 py-2"
+                      >
+                        <option key={0} value="">
+                          Alegeți
+                        </option>
+                        {employees.map((employee) => (
+                          <option key={employee.id} value={employee.id}>
+                            {employee.firstName} {employee.lastName}
+                          </option>
+                        ))}
+                      </select>
                     </div>
 
                     <div className="h-14 my-4 space-x-4 pt-4">
@@ -156,7 +223,6 @@ const AddUser = () => {
           </div>
         </Dialog>
       </Transition>
-      <UserList user={responseUser} />
     </>
   );
 };
