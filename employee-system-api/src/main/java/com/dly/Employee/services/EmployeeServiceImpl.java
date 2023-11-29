@@ -73,6 +73,18 @@ public class EmployeeServiceImpl implements  EmployeeService {
         return  employee;
     }
 
+    @Override
+    public List<Employee> getEmployeesByDepartment(Long departmentId) {
+        List<EmployeeEntity> employeeEntities = employeeRepository.findByDepartmentId(departmentId);
+        return employeeEntities.stream().map(emp -> new Employee(
+                emp.getId(),
+                emp.getFirstName(),
+                emp.getLastName(),
+                emp.getEmailId(),
+                emp.getManagerId(),
+                emp.getDepartmentId())).collect(Collectors.toList());
+    }
+
 //    @Override
 //    public List<EmployeeEntity> getAllEmployees() {
 //        List<EmployeeEntity> employeeEntities = employeeRepository.findAll();

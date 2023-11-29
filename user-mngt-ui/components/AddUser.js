@@ -3,8 +3,10 @@ import React, { useEffect, useRef } from "react";
 import { Fragment, useState } from "react";
 import UserList from "./UserList";
 import { fetchDepartments } from "../public/src/features/departmentSlice";
-import { fetchEmployees } from "../public/src/features/employeesSlice";
-
+import {
+  fetchEmployees,
+  fetchEmployeesByDepartment,
+} from "../public/src/features/employeesSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const AddUser = () => {
@@ -54,6 +56,11 @@ const AddUser = () => {
     setIsOpen(true);
   }
 
+  function getEmployeesByDepartment(department) {
+    const departmentId = departmentIdRef.current.value;
+    dispatch(fetchEmployeesByDepartment(departmentId));
+  }
+
   // const handleChange = (event) => {
   //   const value = event.target.value;
   //   setUser({ ...user, [event.target.name]: value });
@@ -95,12 +102,47 @@ const AddUser = () => {
   return (
     <>
       <div className="container mx-auto my-8">
-        <div className="h-12">
+        <div className="h-12 m-6">
           <button
             onClick={openModal}
             className="rounded bg-slate-600 text-white px-6 py-2 font-semibold"
           >
-            Add User
+            Add Employee
+          </button>
+        </div>
+        <div className="flex items-center h-12 m-6">
+          <div className="relative">
+            <select
+              ref={departmentIdRef}
+              name="departmentId"
+              className="appearance-none rounded bg-slate-600 text-white px-6 py-2 font-semibold"
+            >
+              <option key={0} value="">
+                Alegeți Departamentul
+              </option>
+              {departments.map((department) => (
+                <option key={department.id} value={department.id}>
+                  {department.description}
+                </option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              <svg
+                className="fill-current h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path d="M5.516 7.548c0.436-0.446 1.045-0.481 1.576 0l2.908 2.859 2.908-2.859c0.531-0.481 1.141-0.446 1.576 0 0.436 0.446 0.408 1.197 0 1.615l-3.415 3.356c-0.267 0.262-0.701 0.262-0.968 0l-3.415-3.356c-0.408-0.418-0.436-1.17 0-1.615z" />
+              </svg>
+            </div>
+          </div>
+          <button
+            onClick={() =>
+              getEmployeesByDepartment(departmentIdRef.current.value)
+            }
+            className="ml-4 rounded bg-slate-600 text-white px-6 py-2 font-semibold"
+          >
+            Get Employee by Department
           </button>
         </div>
       </div>

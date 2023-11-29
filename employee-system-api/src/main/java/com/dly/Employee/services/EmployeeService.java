@@ -14,4 +14,6 @@ public interface EmployeeService {
     boolean deleteEmployee(Long id);
 
     Employee updateEmploye(Long id, Employee employee);
+
+    List<Employee> getEmployeesByDepartment(Long departmentId);
 }
