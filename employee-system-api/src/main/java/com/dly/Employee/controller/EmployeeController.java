@@ -58,4 +58,9 @@ public class EmployeeController {
         employee = employeeService.updateEmploye(id, employee);
         return  ResponseEntity.ok(employee);
     }
+
+    @GetMapping("/users/department/{departmentId}")
+    public List<Employee> getEmployeesByDepartment(@PathVariable Long departmentId){
+        return employeeService.getEmployeesByDepartment(departmentId);
+    }
 }
