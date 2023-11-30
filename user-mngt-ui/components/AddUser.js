@@ -102,15 +102,14 @@ const AddUser = () => {
   return (
     <>
       <div className="container mx-auto my-8">
-        <div className="h-12 m-6">
+        <div className="flex items-center h-12 m-6">
           <button
             onClick={openModal}
-            className="rounded bg-slate-600 text-white px-6 py-2 font-semibold"
+            className="rounded bg-slate-600 text-white px-6 py-2 font-semibold m-6"
           >
             Add Employee
           </button>
-        </div>
-        <div className="flex items-center h-12 m-6">
+
           <div className="relative">
             <select
               ref={departmentIdRef}

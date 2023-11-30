@@ -5,6 +5,8 @@ import Login from "../components/Login";
 import Navbar from "../components/Navbar";
 import UserList from "../components/UserList";
 import Dashboard from "../components/Dashboard";
+import AddDepartment from "../components/AddDepartment";
+import DepartmentList from "../components/DepartmentList";
 
 export default function Home({ session }) {
   if (!session) return <Login />;
@@ -17,9 +19,10 @@ export default function Home({ session }) {
 
       <main>
         <AddUser />
+        <AddDepartment />
         <UserList />
 
-        <Dashboard />
+        <DepartmentList />
       </main>
     </div>
   );

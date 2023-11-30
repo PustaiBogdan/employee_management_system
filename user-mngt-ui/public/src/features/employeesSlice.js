@@ -15,7 +15,7 @@ export const fetchEmployees = createAsyncThunk(
       throw new Error("Failed to fetch employees");
     }
     const employees = await response.json();
-    // console.log(employees);
+    console.log(employees);
     return employees;
   }
 );

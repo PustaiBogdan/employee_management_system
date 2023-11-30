@@ -6,7 +6,6 @@ import { fetchEmployees } from "../public/src/features/employeesSlice";
 import { fetchDepartments } from "../public/src/features/departmentSlice";
 
 const UserList = () => {
-  console.log("22222");
   const USER_API_BASE_URL = "http://localhost:8080/api/v1/users";
   const dispatch = useDispatch();
   // const [users, setUsers] = useState(null);
@@ -16,8 +15,6 @@ const UserList = () => {
   const departments = useSelector((state) => state.departments.departments);
   const employees = useSelector((state) => state.employees.employees);
   const status = useSelector((state) => state.employees.status);
-
-  console.log(" dd ", employees);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,15 +30,24 @@ const UserList = () => {
     fetchData();
   }, [dispatch, responseUser]);
 
-  const deleteUser = (e, id) => {
+  const deleteUser = async (e, id) => {
     e.preventDefault();
-    fetch(USER_API_BASE_URL + "/" + id, {
-      method: "DELETE",
-    });
+    try {
+      const response = await fetch(USER_API_BASE_URL + "/" + id, {
+        method: "DELETE",
+      });
+      console.log(response);
+      if (response.ok) {
+        dispatch(fetchEmployees());
+      } else {
+        console.log("eroare la fetch employees");
+      }
+    } catch (error) {
+      console.log("Error:", error);
+    }
   };
 
   const editUser = (e, id) => {
-    console.log("333");
     e.preventDefault();
     setUserId(id);
     dispatch(fetchEmployees());

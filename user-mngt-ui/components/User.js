@@ -10,7 +10,6 @@ const User = ({ user, deleteUser, editUser, departmentName, managerName }) => {
     managerName,
     departmentName,
   ];
-  console.log(user);
 
   return (
     <tr key={user.id}>
